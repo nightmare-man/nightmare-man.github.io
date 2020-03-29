@@ -4,7 +4,7 @@ title: JavaScript数据结构和类型
 author: nightmare-man
 subtitle: JavaScript数据结构和类型
 date: 2020-03-28
-tags: linux
+tags: JavaScript
 ---
 # 		JavaScript数据结构和类型
 
