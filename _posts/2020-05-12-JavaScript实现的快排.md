@@ -4,7 +4,7 @@ title: JavaScript实现的快排
 author: nightmare-man
 subtitle: JavaScript实现的快排
 date: 2020-05-12
-tags: JavaScript基础
+tags: JavaScript
 ---
 
 # JavaScript实现的快排
