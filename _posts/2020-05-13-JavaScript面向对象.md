@@ -3,7 +3,7 @@ layout: post
 title: JavaScript面向对象
 author: nightmare-man
 subtitle: JavaScript面向对象
-date: 2020-02-01
+date: 2020-05-13
 tags: JavaScript
 
 ---
