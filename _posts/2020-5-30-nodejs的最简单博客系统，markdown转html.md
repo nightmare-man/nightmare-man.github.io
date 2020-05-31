@@ -4,7 +4,7 @@ title: 基于markdown转html的nodejs博客系统
 author: nightmare-man
 subtitle: 基于markdown转html的nodejs博客系统
 date: 2020-05-30
-tags: JavaScript
+tags: JavaScript demo
 ---
 
 # 基于markdown转html的nodejs博客系统
