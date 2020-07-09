@@ -45,7 +45,7 @@ mathjax: true
 
 # Share
 social-share: true
-social-share-items: ['wechat', 'weibo', 'douban', 'twitter']
+social-share-items: ['wechat', 'weibo', 'douban']
 
 # theme color 主题皮肤
 theme-color: 'default'  # pink or default
@@ -56,7 +56,7 @@ postPatterns: 'circuitBoard'
 # SNS settings 配置社交网站
 # url: email, weibo, zhihu, twitter, instagram, juejin, github, douban, facebook, dribble, uicn, jianshu, medium, linkedin
 sns:
-  email: 'mailto:1071100387@qq.com'
+  email: 'mailto:107lsmlsm@whut.edu.cn'
   github: '//github.com/nightmare-man'
 
 # Tags 设置标签
