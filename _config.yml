@@ -1,7 +1,7 @@
 ﻿# Site settings 配置站点
 title: 'nightmare-man'
 description: 'life if char,study is long long.'
-keyword: 'student,java,client'
+keyword: 'student,211本科'
 url: '' # your host
 
 # when build blog on server, if you don't need baseurl, you should leave this value blank.
@@ -26,7 +26,7 @@ footer:
 # Author 配置博主信息
 author: 'nightmare-man'
 nickname: ' '
-bio: 'student'
+bio: '211本科在读'
 avatar: '/assets/img/myprofile.png'
 
 # Search
@@ -37,7 +37,7 @@ nightMode: true
 
 # Comments 评论功能
 comments:
-  disqus: false
+  disqus: true
   disqus_url: 'https://liaokeyu.disqus.com/embed.js'
 
 # MathJax 公式支持 by Ray-Eldath
