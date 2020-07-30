@@ -4,7 +4,7 @@ title: windows-termianal+wsl2+vscode环境搭建
 subtitle: windows-termianal+wsl2+vscode环境搭建
 date: 2020-07-30
 author: nightmare-man
-tags: x86汇编
+tags: 工具使用
 ---
 # windows-termianal+wsl2+vscode环境搭建
 
