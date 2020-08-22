@@ -4,7 +4,7 @@ title: CSAPP-LAB-MALLOC实现与GC原理
 subtitle: CSAPP-LAB-MALLOC实现与GC原理
 date: 2020-08-19
 author: nightmare-man
-tags: 计算机组成原理
+tags: demo/lab
 ---
 # CSAPP-LAB-MALLOC实现与GC原理
 
