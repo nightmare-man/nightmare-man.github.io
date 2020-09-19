@@ -271,7 +271,7 @@
 			col_cnt= Math.floor( globalWidth/block_width);
 		}
 
-		var b_lenghth=Math.floor(min_length/10);
+		var b_lenghth=Math.floor(min_length/((globalHeight>globalWidth?col_cnt:row_cnt)/2));
 		b_list.forEach(function(elem){
 			elem.style.width=b_lenghth+"px";
 			elem.style.height=b_lenghth+"px";
