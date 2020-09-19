@@ -19,10 +19,26 @@
 			padding: 0;
 		}
 		#my_canvas {
+			position: absolute;
+			left: 0px;
+			top: 0px;
 			width: 100%;
 			height: 100%;
 		}
-		
+		#input-div{
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 100;
+		}
+		button{
+			position: absolute;
+			opacity: 0.2;
+			background-color: cornflowerblue;
+			z-index: 100;
+		}
 		</style>
 </head>
 
@@ -33,35 +49,77 @@
 		</canvas>
 		
 	</div>	
+	<div id="input-div">
+
+		<button id="play" onclick="start_or_pause();">play</button>
+		<button id="up" onclick="new_position=0;">up</button>
+		<button id="down" onclick="new_position=3;">down</button>
+		<button id="left" onclick="new_position=2;">left</button>
+		<button id="right" onclick="new_position=1;">right</button>
+	</div>	
 	
 	<script>
-		function player_input(event){
-			var e=event||window.event;
-			var start_button_len=min_length/2;
-			var m_x=e.clientX;
-			var m_y=e.clientY;
-			if(m_x>screen.availWidth/2-start_button_len/2&&m_x<screen.availWidth/2+start_button_len/2){
-				if(m_y<screen.availHeight/2-start_button_len/2){
-					new_position=0;
-				}else if(m_y>screen.availHeight/2+start_button_len/2){
-					new_position=3;
-				}
-			}else if(m_x<screen.availWidth/2-start_button_len/2&&m_y>screen.availHeight/2-start_button_len/2&&m_y<screen.availHeight+start_button_len/2){
-				new_position=2;
-			}else if(m_x>screen.availWidth/2+start_button_len/2&&m_y>screen.availHeight/2-start_button_len/2&&m_y<screen.availHeight+start_button_len/2){
-				new_position=1;
+		
+		function start_or_pause(){
+			if(game_status==0){
+				b_p.innerHTML="pause";
+				game_status=1;
+				game_tick=setInterval(function(){
+				clear_screen(mc);
+				snake_block=move_snake(snake_block,col_cnt,row_cnt,game_tick);
+				draw_snake(snake_block,mc,block_width);
+		
+		},500-score*100);
+				
+			}else if(game_status==0){
+				b_p.innerHTML="play";
+				game_status=0;
+				clearInterval(game_tick);
+			}else{
+				clear_screen(mc);
+				new_position=3;
+				old_position=3;
+				score=0;
+				try_time=0;//记录没有吃到东西的时间 到达一定时间 就会生成另一个
+				game_status=0;//0是暂停停止 1是运行 3是游戏结束 
+				
+				snake_block=[[Math.floor( col_cnt/2-1),Math.floor( row_cnt/2)],[Math.floor( col_cnt/2),Math.floor( row_cnt/2)],[Math.floor( col_cnt/2+1),Math.floor( row_cnt/2)]];
+				food_block=[];
+				barrier_block=[];
+				add_barrier();
+				add_food();
+				draw_snake(snake_block,mc,block_width);
+				
+				game_tick=null;
 			}
 		}
 		function clear_screen(my_canvas){
 			var ctx=my_canvas.getContext("2d");
 			ctx.clearRect(0,0,my_canvas.width,my_canvas.height);
 		}
+		function free_block(new_head){
+			barrier_block.forEach(function(elem){
+				if(elem[0]===new_head[0]&&elem[1]===new_head[1]){//吃东西了
+					return -1;
+				}
+			});
+			snake_block.forEach(function(elem){
+				if(elem[0]===new_head[0]&&elem[1]===new_head[1]){//吃东西了
+					return -1;
+				}
+			});
+			return 0;
+		}
 		function add_food(){
 			var new_food=[1,1];
 			
+
 			new_food[0]=parseInt( Math.random()*col_cnt);
 			new_food[1]=parseInt(Math.random()*row_cnt);
-			
+			while(free_block(new_food)==-1){
+				new_food[0]=parseInt( Math.random()*col_cnt);
+			new_food[1]=parseInt(Math.random()*row_cnt);
+			}
 			
 			
 			food_block.push(new_food);
@@ -82,7 +140,7 @@
 			var ctx=my_canvas.getContext("2d");
 			
 		ctx.font="20px Arial";
-		ctx.fillText("score:"+score,0,screen.availHeight-20);
+		ctx.fillText("score:"+score,0,globalHeight-20);
 			barrier_block.forEach(function(elem){
 				ctx.fillStyle="#0000ff";
 				ctx.fillRect(elem[0]*block_width,elem[1]*block_width,block_width,block_width);
@@ -136,21 +194,17 @@
 			if(new_head[0]>=max_col||new_head[0]<0||new_head[1]<0||new_head[1]>=max_row){//检测撞墙
 				clearInterval(game_tick);
 				alert("your snake crash!");
-				
+				game_status=3;
+				b_p.innerHTML="restart";
 			}
 			
-			barrier_block.forEach(function(elem){
-				if(elem[0]===new_head[0]&&elem[1]===new_head[1]){//吃东西了
-					clearInterval(game_tick);
+			if(free_block(new_head)==-1){
+				clearInterval(game_tick);
 				alert("your snake crash!");
-				}
-			});
-			snake_block.forEach(function(elem){
-				if(elem[0]===new_head[0]&&elem[1]===new_head[1]){//吃东西了
-					clearInterval(game_tick);
-				alert("your snake crash!");
-				}
-			});
+				game_status=3;
+				b_p.innerHTML="restart";
+			}
+			var eat_flag=0;
 			food_block.forEach(function(elem,idx){
 				if(elem[0]===new_head[0]&&elem[1]===new_head[1]){//吃东西了
 					food_block.splice(idx,1);
@@ -158,54 +212,89 @@
 					score++;
 					add_food();
 					add_barrier();
+					try_time=0;
+					eat_flag=1;
 				}
 			});
-
+			if(eat_flag==0){
+				try_time++;
+				if(try_time>40){
+					add_food();
+				}
+			}
 			snake_block_head=[new_head];
 			snake_block=snake_block_head.concat(snake_block);
 			return snake_block;
 		}
 		//以下是代码主线程
 		var mc=document.getElementById("my_canvas");
-		
+		var globalHeight=document.body.clientHeight;
+		var globalWidth=document.body.clientWidth; 
 		var min_length;
 		var col_cnt;
 		var block_width;
 		var row_cnt;
 		
+		var b_p=document.getElementById("play");
+		var b_u=document.getElementById("up");
+		var b_d=document.getElementById("down");
+		var b_l=document.getElementById("left");
+		var b_r=document.getElementById("right");
+		var b_list=[b_p,b_l,b_r,b_u,b_d];
 
-		if(screen.availHeight>screen.availWidth){//竖屏
-			min_length=screen.availWidth;
+		if(globalHeight>globalWidth){//竖屏
+			min_length=globalWidth;
 			col_cnt=20;
 			block_width=Math.floor( min_length/20);
-			row_cnt=Math.floor(screen.availHeight/block_width);
+			row_cnt=Math.floor(globalHeight/block_width);
 		}else{
-			min_length=screen.availHeight;
+			min_length=globalHeight;
 			row_cnt=20;
 			block_width=Math.floor( min_length/20);
-			col_cnt= Math.floor( screen.availWidth/block_width);
+			col_cnt= Math.floor( globalWidth/block_width);
 		}
 
+		var b_lenghth=Math.floor(min_length/10);
+		b_list.forEach(function(elem){
+			elem.style.width=b_lenghth+"px";
+			elem.style.height=b_lenghth+"px";
+		});
+
+		var center_b_left=Math.floor(globalWidth/2-b_lenghth/2);
+		var center_b_top=Math.floor(globalHeight/2+globalHeight/4-b_lenghth/2);
+		b_p.style.left= center_b_left+"px" ;
+		b_p.style.top=center_b_top+"px" ;
+
+		b_l.style.left=(center_b_left-b_lenghth)+"px";
+		b_l.style.top=(center_b_top)+"px";
+
+		b_r.style.left=(center_b_left+b_lenghth)+"px";
+		b_r.style.top=(center_b_top)+"px";
+
+		b_u.style.left=(center_b_left)+"px";
+		b_u.style.top=(center_b_top-b_lenghth)+"px";
+
+		b_d.style.left=(center_b_left)+"px";
+		b_d.style.top=(center_b_top+b_lenghth)+"px";
+
+
 		
-
-
-		var snake_block=[[Math.floor( col_cnt/2-1),Math.floor( row_cnt/2)],[Math.floor( col_cnt/2),Math.floor( row_cnt/2)],[Math.floor( col_cnt/2+1),Math.floor( row_cnt/2)]];
-		var food_block=[[1,1]];
-		var barrier_block=[[2,2]];
-		mc.width=screen.availWidth;
-		mc.height=screen.availHeight;
+		mc.width=globalWidth;
+		mc.height=globalHeight;
 		var new_position=3;
 		var old_position=3;
 		var score=0;
-	
+		var try_time=0;//记录没有吃到东西的时间 到达一定时间 就会生成另一个
+		var game_status=0;//0是暂停停止 1是运行 3是游戏结束 
+		
+		var snake_block=[[Math.floor( col_cnt/2-1),Math.floor( row_cnt/2)],[Math.floor( col_cnt/2),Math.floor( row_cnt/2)],[Math.floor( col_cnt/2+1),Math.floor( row_cnt/2)]];
+		var food_block=[];
+		var barrier_block=[];
+		add_barrier();
+		add_food();
 		draw_snake(snake_block,mc,block_width);
 		
-		var game_tick=setInterval(function(){
-			clear_screen(mc);
-			snake_block=move_snake(snake_block,col_cnt,row_cnt,game_tick);
-			draw_snake(snake_block,mc,block_width);
-		
-		},500-score*100);
+		var game_tick=null;
 	</script>
 </body>
 </html>
