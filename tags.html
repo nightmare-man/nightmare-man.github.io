@@ -245,13 +245,29 @@
 
 		if(globalHeight>globalWidth){//竖屏
 			min_length=globalWidth;
-			col_cnt=20;
-			block_width=Math.floor( min_length/20);
+			if(globalHeight>1.5*globalWidth){
+				
+				col_cnt=16;
+			}else{
+				col_cnt=20;
+				
+			}
+			
+			
+			block_width=Math.floor( min_length/col_cnt);
 			row_cnt=Math.floor(globalHeight/block_width);
 		}else{
 			min_length=globalHeight;
-			row_cnt=20;
-			block_width=Math.floor( min_length/20);
+			
+			if(globalWidth>1.5*globalHeight){
+				
+				row_cnt=16;
+			}else{
+				row_cnt=20;
+				
+			}
+			
+			block_width=Math.floor( min_length/row_cnt);
 			col_cnt= Math.floor( globalWidth/block_width);
 		}
 
