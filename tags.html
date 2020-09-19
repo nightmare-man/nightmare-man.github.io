@@ -1,34 +1,211 @@
----
-title: Tags
-layout: default
----
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,
+    width=device-width,initial-scale=1.0" />
+    <title>snake</title>
+    <meta name="author"  content="nightmare-man">
+    <meta name="description" content="life if char,study is long long.">
+	<meta name="keywords"  content="student,211本科">
+	<style>
+		html{ height:100%; overflow:hidden;}
 
-{% include header.html %}
+		body{ background:blueviolet; height:100%;}
+		* {
+			border-style: none;
+			outline-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		#my_canvas {
+			width: 100%;
+			height: 100%;
+		}
+		
+		</style>
+</head>
 
-<div class="g-banner tags-banner {{ site.postPatterns | prepend: 'post-pattern-' }} {{ site.theme-color | prepend: 'bgcolor-' }}" data-theme="{{ site.theme-color }}">
-    <h2>TAGS</h2>
-</div>
+<body >
+	<div id="video-div">
+		<canvas id="my_canvas" onclick="player_input(event)">
+	
+		</canvas>
+		
+	</div>	
+	
+	<script>
+		function player_input(event){
+			var e=event||window.event;
+			var start_button_len=min_length/2;
+			var m_x=e.clientX;
+			var m_y=e.clientY;
+			if(m_x>screen.availWidth/2-start_button_len/2&&m_x<screen.availWidth/2+start_button_len/2){
+				if(m_y<screen.availHeight/2-start_button_len/2){
+					new_position=0;
+				}else if(m_y>screen.availHeight/2+start_button_len/2){
+					new_position=3;
+				}
+			}else if(m_x<screen.availWidth/2-start_button_len/2&&m_y>screen.availHeight/2-start_button_len/2&&m_y<screen.availHeight+start_button_len/2){
+				new_position=2;
+			}else if(m_x>screen.availWidth/2+start_button_len/2&&m_y>screen.availHeight/2-start_button_len/2&&m_y<screen.availHeight+start_button_len/2){
+				new_position=1;
+			}
+		}
+		function clear_screen(my_canvas){
+			var ctx=my_canvas.getContext("2d");
+			ctx.clearRect(0,0,my_canvas.width,my_canvas.height);
+		}
+		function add_food(){
+			var new_food=[1,1];
+			
+			new_food[0]=parseInt( Math.random()*col_cnt);
+			new_food[1]=parseInt(Math.random()*row_cnt);
+			
+			
+			
+			food_block.push(new_food);
+			
+			
+		}
+		function add_barrier(){
+			var new_food=[1,1];
+			
+			new_food[0]=parseInt( Math.random()*col_cnt);
+			new_food[1]=parseInt(Math.random()*row_cnt);
+			
+			
+			
+			barrier_block.push(new_food);
+		}
+		function draw_snake(snake_block,my_canvas,block_width){
+			var ctx=my_canvas.getContext("2d");
+			
+		ctx.font="20px Arial";
+		ctx.fillText("score:"+score,0,screen.availHeight-20);
+			barrier_block.forEach(function(elem){
+				ctx.fillStyle="#0000ff";
+				ctx.fillRect(elem[0]*block_width,elem[1]*block_width,block_width,block_width);
+			});
+			food_block.forEach(function(elem){
+				ctx.fillStyle="#ff0000";
+				ctx.fillRect(elem[0]*block_width,elem[1]*block_width,block_width,block_width);
+			});
+			snake_block.forEach(function(elem,idx){
+				
+				
+				if(idx==0){
+					ctx.fillStyle="#000000";//黑色为蛇头
+				}else{
+					ctx.fillStyle="#222222";//灰色为蛇身体
+				}
+				
+				ctx.fillRect(elem[0]*block_width,elem[1]*block_width,block_width,block_width);
+			});
+		}
+		//以下进行移动 返回新的 snake_block数组
+		function move_snake(snake_block,max_col,max_row,game_tick){
+			var last_node=snake_block.pop();//删除最后一个
+			var new_head=[1,1];
+			new_head[0]=snake_block[0][0];
+			new_head[1]=snake_block[0][1];
+			if(new_position+old_position==3){
+				new_position=old_position;//不允许直接倒车
+			}
+			switch(new_position){
+				case 0:{
+					new_head[1]--;//向上
+					break;
+				}
+				case 1:{
+					new_head[0]++;//向右
+					break;
+				}
+				case 2:{
+					new_head[0]--;
+					break;
+				}
+				case 3:{
+					new_head[1]++;
+					break;
+				}
+			}
+			old_position=new_position;//移动完成后更新old_position;
 
-<main class="tags-content">
 
-    <ul class="tags-list">
-        <li>
-        {% if site.recommend-tags and site.tags.size>0 %}
-            {% for tag in site.tags %}
-            <a href="#{{ tag[0] }}" class="tag">{{ tag[0]}}</a>
-            {% endfor %}
-        {% endif %}
-        </li>
-        
-        {% for tag in site.tags %}
-        <li>
-            <span class="tag-name" id="{{ tag[0] }}">「{{ tag[0] }}」</span>
-            {% for post in tag[1] %}
-            <a class="tag-post" href="{{ post.url | relative_url }}" title="{{ post.title }}">{{ post.title }}</a>
-            {% endfor %}
-        </li>
-        {% endfor%}
-    </ul>
-</main>
-    
-{% include footer.html %}
+			if(new_head[0]>=max_col||new_head[0]<0||new_head[1]<0||new_head[1]>=max_row){//检测撞墙
+				clearInterval(game_tick);
+				alert("your snake crash!");
+				
+			}
+			
+			barrier_block.forEach(function(elem){
+				if(elem[0]===new_head[0]&&elem[1]===new_head[1]){//吃东西了
+					clearInterval(game_tick);
+				alert("your snake crash!");
+				}
+			});
+			snake_block.forEach(function(elem){
+				if(elem[0]===new_head[0]&&elem[1]===new_head[1]){//吃东西了
+					clearInterval(game_tick);
+				alert("your snake crash!");
+				}
+			});
+			food_block.forEach(function(elem,idx){
+				if(elem[0]===new_head[0]&&elem[1]===new_head[1]){//吃东西了
+					food_block.splice(idx,1);
+					snake_block[snake_block.length]=last_node;
+					score++;
+					add_food();
+					add_barrier();
+				}
+			});
+
+			snake_block_head=[new_head];
+			snake_block=snake_block_head.concat(snake_block);
+			return snake_block;
+		}
+		//以下是代码主线程
+		var mc=document.getElementById("my_canvas");
+		
+		var min_length;
+		var col_cnt;
+		var block_width;
+		var row_cnt;
+		
+
+		if(screen.availHeight>screen.availWidth){//竖屏
+			min_length=screen.availWidth;
+			col_cnt=20;
+			block_width=Math.floor( min_length/20);
+			row_cnt=Math.floor(screen.availHeight/block_width);
+		}else{
+			min_length=screen.availHeight;
+			row_cnt=20;
+			block_width=Math.floor( min_length/20);
+			col_cnt= Math.floor( screen.availWidth/block_width);
+		}
+
+		
+
+
+		var snake_block=[[Math.floor( col_cnt/2-1),Math.floor( row_cnt/2)],[Math.floor( col_cnt/2),Math.floor( row_cnt/2)],[Math.floor( col_cnt/2+1),Math.floor( row_cnt/2)]];
+		var food_block=[[1,1]];
+		var barrier_block=[[2,2]];
+		mc.width=screen.availWidth;
+		mc.height=screen.availHeight;
+		var new_position=3;
+		var old_position=3;
+		var score=0;
+	
+		draw_snake(snake_block,mc,block_width);
+		
+		var game_tick=setInterval(function(){
+			clear_screen(mc);
+			snake_block=move_snake(snake_block,col_cnt,row_cnt,game_tick);
+			draw_snake(snake_block,mc,block_width);
+		
+		},500-score*100);
+	</script>
+</body>
+</html>
