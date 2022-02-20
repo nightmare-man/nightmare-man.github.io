@@ -1,18 +1,19 @@
 ---
+
 layout: post
 title: 跳表(skip list)的实现
 subtitle: 跳表(skip list)的实现
 date: 2022-02-18
 author: nightmare-man
 tags: 数据结构与算法 c/c++
+
 ---
+
 # 0x00
 
-    在《Programming:principle and practice using c++》一书的习题中出现了一个跳表 skip list，第一次听说，百度后大开眼界，是一种顺序查找链表，时间复杂度O(n)，Redis中就有用到。原理详见[Redis 为什么用跳表而不用平衡树？ - 掘金 (juejin.cn)](https://juejin.cn/post/6844903446475177998)
+    在《Programming:principle and practice using c++》一书的习题中出现了一个跳表 skip list，第一次听说，百度后大开眼界，是一种顺序查找链表，其查找的时间复杂度为O(logn)，插入和删除也为O(logn),Redis中就有用到。原理详见[Redis 为什么用跳表而不用平衡树？ - 掘金 (juejin.cn)](https://juejin.cn/post/6844903446475177998)
 
     自己实现了一下，效果如图：
-
-
 
 ![QQ截图20220218173555.png](/assets/img/QQ截图20220218173555.png)
 
@@ -91,7 +92,18 @@ Node* findx(MList& l,int val){
     }
     return ret;
 }
-
+void M_delete(MList& l,int val){
+    Node* tar=findx(l,val);
+    if(!tar) error("没有该节点，无法删除\n");
+    Node* p=tar;
+    while(p){
+        Node* t1=p->last;
+        Node* t2=p->next;
+        t1->next=t2;
+        t2->last=t1;
+        p=p->down;
+    }
+}
 void insert(MList& l,Node* n){
     Node* pos=nullptr;
     Node* p=l.Head[layer];
@@ -159,6 +171,8 @@ int main(){
     Node* x=findx(list,18);
     if(x) cout<<"find\n";
     else cout<<"no exist\n";
+    M_delete(list,6);
+    print(list);
     return 0;
 }
 
