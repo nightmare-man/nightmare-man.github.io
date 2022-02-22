@@ -1,5 +1,4 @@
 ---
-
 layout: post
 title: 跳表(skip list)的实现
 subtitle: 跳表(skip list)的实现
@@ -122,7 +121,7 @@ void insert(MList& l,Node* n){
             error("已经存在该节点");
         }
     }
-    
+
     n->next=pos->next;
     n->last=pos;
     pos->next->last=n;
@@ -175,5 +174,4 @@ int main(){
     print(list);
     return 0;
 }
-
 ```
