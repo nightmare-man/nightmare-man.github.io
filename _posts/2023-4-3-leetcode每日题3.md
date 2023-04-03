@@ -1,8 +1,8 @@
 ---
 layout: post
-title: leetcode每日题1
-subtitle: leetcode每日题1
-date: 2023-4-1
+title: leetcode每日题3
+subtitle: leetcode每日题3
+date: 2023-4-3
 author: nightmare-man
 tags: 数据结构与算法
 ---
